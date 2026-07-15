@@ -7,7 +7,6 @@ const _AI_KEY_LS   = 'todoGeminiKey';
 const _AI_MODEL_LS = 'todoGeminiModel';
 
 function _aiKey() {
-  if (window._GEMINI_KEY) return window._GEMINI_KEY;
   return localStorage.getItem(_AI_KEY_LS) || '';
 }
 function _aiModel() { return localStorage.getItem(_AI_MODEL_LS) || 'gemini-flash-lite-latest'; }
@@ -446,16 +445,89 @@ function _aiParseJson(text) {
   return JSON.parse(m ? m[1] : text.trim());
 }
 
-/* ── Mise à jour de la clé API ── */
+/* ── Mise à jour de la clé API (depuis la modale Import IA) ── */
 function _aiEditKey() {
-  const newKey = prompt('Clé API Google Gemini :', _aiKey());
-  if (newKey !== null && newKey.trim()) {
-    localStorage.setItem(_AI_KEY_LS, newKey.trim());
-    localStorage.removeItem(_AI_MODEL_LS);
+  _aiOpenKeyModal(() => {
     _aiSetStatus('Chargement des modèles…');
-    document.getElementById('aiModelSelect').innerHTML = '<option value="">Chargement…</option>';
+    const sel = document.getElementById('aiModelSelect');
+    if (sel) sel.innerHTML = '<option value="">Chargement…</option>';
     _aiLoadModelSelector();
-  }
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   Modale globale — Clé API Gemini
+   Accessible depuis le bouton "Clé API IA" du header,
+   et depuis les liens "Modifier la clé API" des modales IA.
+   ══════════════════════════════════════════════════════ */
+function _aiOpenKeyModal(onSaved) {
+  document.getElementById('aiKeyOverlay')?.remove();
+
+  const current = _aiKey();
+  const overlay = document.createElement('div');
+  overlay.id = 'aiKeyOverlay';
+  overlay.className = 'todo-ai-overlay';
+  overlay.style.zIndex = 3200;
+  overlay.onclick = e => { if (e.target === overlay) overlay.remove(); };
+
+  overlay.innerHTML = `
+    <div class="todo-ai-modal" style="width:440px" onclick="event.stopPropagation()">
+      <div class="todo-ai-header">
+        <div class="todo-ai-title">Clé API Gemini</div>
+        <button class="todo-ai-x" onclick="document.getElementById('aiKeyOverlay').remove()">&#x2715;</button>
+      </div>
+      <div class="todo-ai-body">
+        <div style="font-size:11px;color:var(--muted);line-height:1.6">
+          Cette clé est nécessaire pour utiliser les fonctions IA (import de transcript, correction de texte…).
+          Elle est stockée uniquement dans votre navigateur et n'est jamais partagée.
+        </div>
+        <div>
+          <label class="todo-ai-label">Clé API</label>
+          <div style="display:flex;gap:6px">
+            <input type="password" id="aiKeyInput" class="todo-ai-select" style="width:auto;flex:1"
+                   placeholder="Collez votre clé API Gemini…" value="${_esc(current)}"
+                   onkeydown="if(event.key==='Enter')_aiSaveKey(${onSaved ? 'true' : 'false'})">
+            <button class="todo-ai-x" style="border:1px solid var(--border)" title="Afficher / masquer"
+                    onclick="const i=document.getElementById('aiKeyInput');i.type=i.type==='password'?'text':'password'">&#128065;</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="todo-ai-btn" onclick="_aiSaveKey(${onSaved ? 'true' : 'false'})">Enregistrer</button>
+          ${current ? `<span class="todo-ai-key-link" onclick="_aiClearKey()">Supprimer la clé</span>` : ''}
+          <span class="todo-ai-status" id="aiKeyStatus"></span>
+        </div>
+        <div style="font-size:10px;color:var(--muted)">
+          Pas encore de clé ? Obtenez-en une gratuitement sur
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--accent)">Google AI Studio</a>.
+        </div>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+  window._aiKeyModalCallback = typeof onSaved === 'function' ? onSaved : null;
+  setTimeout(() => document.getElementById('aiKeyInput')?.focus(), 50);
+}
+
+function _aiSaveKey(hasCallback) {
+  const input = document.getElementById('aiKeyInput');
+  const status = document.getElementById('aiKeyStatus');
+  const value = (input?.value || '').trim();
+  if (!value) { if (status) { status.textContent = 'Entrez une clé valide.'; status.style.color = '#db4035'; } return; }
+
+  localStorage.setItem(_AI_KEY_LS, value);
+  localStorage.removeItem(_AI_MODEL_LS);
+  if (status) { status.textContent = 'Clé enregistrée.'; status.style.color = 'var(--muted)'; }
+
+  document.getElementById('aiKeyOverlay')?.remove();
+  if (hasCallback && typeof window._aiKeyModalCallback === 'function') window._aiKeyModalCallback();
+  window._aiKeyModalCallback = null;
+}
+
+function _aiClearKey() {
+  localStorage.removeItem(_AI_KEY_LS);
+  localStorage.removeItem(_AI_MODEL_LS);
+  document.getElementById('aiKeyOverlay')?.remove();
+  window._aiKeyModalCallback = null;
 }
 
 /* ══════════════════════════════════════════════════════
