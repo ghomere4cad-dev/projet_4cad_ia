@@ -31,7 +31,8 @@ const _ferieCache = {}; // year → Set<timestamp>
    CRUD ressources (inchangé)
    ══════════════════════════════════ */
 function saveResources() {
-  try { localStorage.setItem(RESOURCES_KEY, JSON.stringify(resources)); } catch(e) {}
+  try { localStorage.setItem(RESOURCES_KEY, JSON.stringify(resources)); }
+  catch(e) { _warnStorageFailure('ressources', e); }
 }
 
 /* Construit la payload GHO : { [resourceId]: ghoData } */
@@ -120,7 +121,8 @@ function _mergeGhoData(payload) {
 /* Sauvegarde la data GHO en localStorage */
 function saveGhoData() {
   const payload = _buildGhoPayload();
-  try { localStorage.setItem(GHO_KEY, JSON.stringify(payload)); } catch(e) {}
+  try { localStorage.setItem(GHO_KEY, JSON.stringify(payload)); }
+  catch(e) { _warnStorageFailure('données GHO (charges par ressource)', e); }
 }
 
 function loadResources() {

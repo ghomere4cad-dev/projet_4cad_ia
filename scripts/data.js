@@ -45,6 +45,7 @@ function savePortfolio(){
     localStorage.setItem(STORAGE_KEY, JSON.stringify(serialized));
   } catch(e){
     console.warn('localStorage save failed:', e);
+    _warnStorageFailure('portfolio (clients/projets)', e);
   }
 }
 
@@ -102,7 +103,10 @@ function saveFirmPortfolio(firmData) {
   portfolioFirm = firmData;
   try {
     localStorage.setItem(FIRM_STORAGE_KEY, JSON.stringify(_serializePortfolio(firmData)));
-  } catch(e) { console.warn('Firm localStorage save failed:', e); }
+  } catch(e) {
+    console.warn('Firm localStorage save failed:', e);
+    _warnStorageFailure('base ferme (import GHO)', e);
+  }
 }
 
 /* Chargement de la base ferme depuis localStorage */

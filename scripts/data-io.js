@@ -60,6 +60,8 @@ function _applyImportedAppData(data) {
   }
   if (!confirm('Importer ce fichier remplacera toutes les données locales (Todo, Suivi, Ressources, Portefeuille).\n\nContinuer ?')) return;
 
+  const _warnCountBefore = _storageWarned.size;
+
   if (data.todo) {
     _todoData = data.todo;
     _todoWriteLS();
@@ -73,7 +75,8 @@ function _applyImportedAppData(data) {
     saveResources();
   }
   if (data.gho) {
-    try { localStorage.setItem(GHO_KEY, JSON.stringify(data.gho)); } catch(e) {}
+    try { localStorage.setItem(GHO_KEY, JSON.stringify(data.gho)); }
+    catch(e) { _warnStorageFailure('données GHO (charges par ressource)', e); }
     if (typeof _mergeGhoData === 'function') _mergeGhoData(data.gho);
   }
   if (Array.isArray(data.portfolio)) {
@@ -82,6 +85,6 @@ function _applyImportedAppData(data) {
     savePortfolio();
   }
 
-  alert('Import terminé.');
+  if (_storageWarned.size === _warnCountBefore) alert('Import terminé.');
   location.reload();
 }

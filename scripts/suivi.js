@@ -231,7 +231,8 @@ function _suiviMigrateState(s) {
 
 /* ── Persistance locale ── */
 function _suiviWriteLS() {
-  try { localStorage.setItem('suivi_' + currentUserId, JSON.stringify(_suiviState)); } catch(e) {}
+  try { localStorage.setItem('suivi_' + currentUserId, JSON.stringify(_suiviState)); }
+  catch(e) { _warnStorageFailure('Suivi (actions/interventions)', e); }
 }
 function _suiviReadLS() {
   try {

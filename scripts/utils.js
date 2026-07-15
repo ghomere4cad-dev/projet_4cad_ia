@@ -193,6 +193,21 @@ let multiViewMode = false;
 const currentUserId    = 'local';
 const currentUserEmail = 'local';
 
+/* ── Signale les échecs d'enregistrement localStorage (quota dépassé, etc.)
+   au lieu de les ignorer silencieusement : sans ça, un import peut sembler
+   réussi alors que rien n'a été persisté, et les données disparaissent
+   silencieusement au prochain rechargement de la page. ── */
+const _storageWarned = new Set();
+function _warnStorageFailure(context, err) {
+  if (_storageWarned.has(context)) return;
+  _storageWarned.add(context);
+  const isQuota = err && (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014);
+  const msg = isQuota
+    ? `Espace de stockage local plein : "${context}" n'a pas pu être enregistré.\n\nVos dernières modifications ne seront pas conservées après un rechargement de la page. Libérez de l'espace (ex : videz le cache du navigateur) puis réessayez.`
+    : `Échec de l'enregistrement local de "${context}" : ${err && err.message ? err.message : err}\n\nVos dernières modifications risquent d'être perdues après un rechargement de la page.`;
+  alert(msg);
+}
+
 /* ══════════════════════════════════════════════════════════
    MODÈLE DE DONNÉES — RESSOURCES & AFFECTATIONS
    ══════════════════════════════════════════════════════════

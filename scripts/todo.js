@@ -68,7 +68,8 @@ function _todoNextOccurrence(dueDate, recurrence) {
 
 /* ── Persistance locale ───────────────────────────────────────────────────── */
 function _todoWriteLS() {
-  try { localStorage.setItem('todo_' + currentUserId, JSON.stringify(_todoData)); } catch(e) {}
+  try { localStorage.setItem('todo_' + currentUserId, JSON.stringify(_todoData)); }
+  catch(e) { _warnStorageFailure('To Do (dossiers/tâches)', e); }
 }
 
 function _todoReadLS() {
