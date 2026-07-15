@@ -198,14 +198,33 @@ const currentUserEmail = 'local';
    réussi alors que rien n'a été persisté, et les données disparaissent
    silencieusement au prochain rechargement de la page. ── */
 const _storageWarned = new Set();
+let _storageFailBatch = null;
+let _storageFailTimer = null;
 function _warnStorageFailure(context, err) {
   if (_storageWarned.has(context)) return;
   _storageWarned.add(context);
   const isQuota = err && (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014);
-  const msg = isQuota
-    ? `Espace de stockage local plein : "${context}" n'a pas pu être enregistré.\n\nVos dernières modifications ne seront pas conservées après un rechargement de la page. Libérez de l'espace (ex : videz le cache du navigateur) puis réessayez.`
-    : `Échec de l'enregistrement local de "${context}" : ${err && err.message ? err.message : err}\n\nVos dernières modifications risquent d'être perdues après un rechargement de la page.`;
-  alert(msg);
+
+  /* Regroupe les échecs survenant dans la même rafale (ex : plusieurs
+     sauvegardes lors d'un même import) en une seule alerte, au lieu d'en
+     déclencher plusieurs coup sur coup — ce qui pousse Chrome à proposer
+     "Empêcher cette page de créer d'autres boîtes de dialogue", bloquant
+     ensuite silencieusement toutes les confirmations de l'appli (y compris
+     la suppression de tâches). */
+  if (!_storageFailBatch) _storageFailBatch = { quota: false, contexts: [] };
+  _storageFailBatch.contexts.push(context);
+  if (isQuota) _storageFailBatch.quota = true;
+
+  clearTimeout(_storageFailTimer);
+  _storageFailTimer = setTimeout(() => {
+    const batch = _storageFailBatch;
+    _storageFailBatch = null;
+    const list = batch.contexts.map(c => `• ${c}`).join('\n');
+    const msg = batch.quota
+      ? `Espace de stockage local plein : les données suivantes n'ont pas pu être enregistrées :\n${list}\n\nVos dernières modifications sur ces éléments ne seront pas conservées après un rechargement de la page. Libérez de l'espace (ex : videz le cache du navigateur) puis réessayez.`
+      : `Échec de l'enregistrement local pour :\n${list}\n\nVos dernières modifications risquent d'être perdues après un rechargement de la page.`;
+    alert(msg);
+  }, 50);
 }
 
 /* ══════════════════════════════════════════════════════════
