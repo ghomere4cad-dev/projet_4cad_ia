@@ -2260,11 +2260,13 @@ async function _suiviAiLoadModels() {
   try {
     const models = await _aiFetchModels();
     if (!models.length) { sel.innerHTML = '<option value="">Aucun modèle</option>'; return; }
-    const saved = typeof _aiModel !== 'undefined' ? _aiModel() : '';
+    const LS     = typeof _AI_MODEL_LS !== 'undefined' ? _AI_MODEL_LS : 'todoGeminiModel';
+    const saved  = localStorage.getItem(LS) || '';
+    const chosen = models.some(m => m.id === saved) ? saved : models[0].id;
     sel.innerHTML = models.map(m =>
-      `<option value="${m.id}" ${(saved || models[0].id) === m.id ? 'selected' : ''}>${m.label}</option>`
+      `<option value="${m.id}" ${chosen === m.id ? 'selected' : ''}>${m.label}</option>`
     ).join('');
-    if (!saved && typeof _AI_MODEL_LS !== 'undefined') localStorage.setItem(_AI_MODEL_LS, models[0].id);
+    if (chosen !== saved) localStorage.setItem(LS, chosen);
   } catch {
     sel.innerHTML = '<option value="">Erreur chargement</option>';
   }
