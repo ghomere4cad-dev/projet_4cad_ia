@@ -1,0 +1,566 @@
+/* main.css — Variables, reset, typographie, composants communs */
+
+[data-theme="light"] {
+  --bg:#f5f6f8;
+  --surface:#ffffff;
+  --surface2:#f0f2f5;
+  --border:#dde1e8;
+  --text:#284053;
+  --muted:#727F8E;
+  --accent:#EC7206;
+  --accent-dark:#c45f00;
+  --accent2:#284053;
+  --navy:#284053;
+  --blue:#72B6EC;
+  --green:#2e7d32;
+  --shadow:rgba(40,64,83,.10);
+  --row-h:22px;
+  --header-h:52px;
+  --label-w:400px
+}
+
+[data-theme="dark"] {
+  --bg:#0f1620;
+  --surface:#162130;
+  --surface2:#1c2d3f;
+  --border:#2a3d52;
+  --text:#e2eaf2;
+  --muted:#7a94a8;
+  --accent:#EC7206;
+  --accent-dark:#f08c2a;
+  --accent2:#72B6EC;
+  --navy:#1c2d3f;
+  --blue:#72B6EC;
+  --green:#43e97b;
+  --shadow:rgba(0,0,0,.35);
+  --row-h:22px;
+  --header-h:52px;
+  --label-w:400px
+}
+
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0
+}
+
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+  min-height:100vh;
+  transition:background .2s,color .2s
+}
+
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
+  height:var(--header-h);
+  border-bottom:3px solid var(--accent);
+  background:var(--surface);
+  position:sticky;
+  top:0;
+  z-index:100;
+  gap:9px;
+  flex-wrap:wrap;
+  box-shadow:0 2px 8px var(--shadow)
+}
+
+button {
+  font-family:Arial,sans-serif;
+  font-size:12px;
+  font-weight:600;
+  padding:6px 12px;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+  transition:all .15s
+}
+
+.sep {
+  width:1px;
+  height:24px;
+  background:var(--border)
+}
+
+main {
+  padding:16px 22px
+}
+
+.section-title {
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding-left:8px;
+  border-left:3px solid var(--accent)
+}
+
+.form-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:14px 18px;
+  margin-bottom:18px;
+  box-shadow:0 1px 4px var(--shadow)
+}
+
+.form-row {
+  display:grid;
+  grid-template-columns:1fr 1fr 1.6fr 1fr 1fr 0.6fr auto auto;
+  gap:8px;
+  align-items:end
+}
+
+.form-group {
+  display:flex;
+  flex-direction:column;
+  gap:4px
+}
+
+label {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:var(--muted)
+}
+
+input[type="text"],input[type="date"],input[type="number"] {
+  font-family:'Courier New',monospace;
+  font-size:12px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  color:var(--text);
+  padding:5px 9px;
+  outline:none;
+  transition:border-color .15s;
+  width:100%
+}
+
+input:focus {
+  border-color:var(--accent)
+}
+
+.data-table-wrap {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  overflow:hidden;
+  margin-bottom:18px;
+  box-shadow:0 1px 4px var(--shadow)
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px
+}
+
+thead tr {
+  background:var(--navy)
+}
+
+th {
+  padding:8px 10px;
+  text-align:left;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:#fff;
+  border-bottom:2px solid var(--accent)
+}
+
+[data-theme="dark"] thead tr {
+  background:var(--surface2)
+}
+
+[data-theme="dark"] th {
+  color:var(--muted)
+}
+
+td {
+  padding:5px 10px;
+  border-bottom:1px solid var(--border);
+  font-family:'Courier New',monospace;
+  vertical-align:middle
+}
+
+tr:last-child td {
+  border-bottom:none
+}
+
+tr.row-tache:not(.editing-row) {
+  cursor:pointer
+}
+
+tr.row-tache:not(.editing-row):hover td {
+  background:rgba(236,114,6,.05)
+}
+
+tr.editing-row {
+  background:rgba(236,114,6,.08)!important
+}
+
+tr.editing-row td {
+  border-bottom-color:rgba(236,114,6,.3)!important
+}
+
+.tag-projet {
+  display:inline-block;
+  padding:1px 8px;
+  border-radius:3px;
+  font-size:10px;
+  font-weight:700;
+  font-family:Arial,sans-serif
+}
+
+.charge-badge {
+  display:inline-block;
+  background:rgba(236,114,6,.12);
+  color:var(--accent);
+  border-radius:3px;
+  padding:1px 6px;
+  font-size:11px;
+  font-weight:700
+}
+
+.del-btn {
+  background:none;
+  border:none;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:13px;
+  padding:2px 5px;
+  border-radius:4px;
+  transition:all .12s
+}
+
+.del-btn:hover {
+  color:#c0392b;
+  background:rgba(192,57,43,.1)
+}
+
+.save-btn {
+  background:rgba(46,125,50,.12);
+  color:var(--green);
+  border:1px solid rgba(46,125,50,.3);
+  border-radius:4px;
+  padding:2px 8px;
+  font-size:11px;
+  cursor:pointer;
+  font-family:Arial,sans-serif;
+  font-weight:700;
+  white-space:nowrap
+}
+
+.save-btn:hover {
+  background:rgba(46,125,50,.22)
+}
+
+.cancel-btn {
+  background:rgba(192,57,43,.07);
+  color:#c0392b;
+  border:1px solid rgba(192,57,43,.2);
+  border-radius:4px;
+  padding:2px 8px;
+  font-size:11px;
+  cursor:pointer;
+  font-family:Arial,sans-serif;
+  font-weight:700;
+  white-space:nowrap
+}
+
+.cancel-btn:hover {
+  background:rgba(192,57,43,.17)
+}
+
+.cell-input {
+  font-family:'Courier New',monospace;
+  font-size:11px;
+  background:var(--bg);
+  border:1px solid var(--accent);
+  border-radius:4px;
+  color:var(--text);
+  padding:2px 5px;
+  outline:none;
+  width:100%;
+  min-width:0
+}
+
+.cell-input:focus {
+  border-color:var(--accent-dark);
+  box-shadow:0 0 0 2px rgba(236,114,6,.15)
+}
+
+.cell-input-date {
+  width:108px
+}
+
+.cell-input-charge {
+  width:52px
+}
+
+.tip-row {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  color:var(--muted);
+  margin-top:2px
+}
+
+.tip-val {
+  color:var(--text);
+  font-family:'Courier New',monospace
+}
+
+.empty {
+  text-align:center;
+  padding:44px 20px;
+  color:var(--muted)
+}
+
+.empty .icon {
+  font-size:38px;
+  margin-bottom:8px
+}
+
+#cpCustom {
+  width:100%;
+  height:29px;
+  border-radius:4px;
+  border:1px solid var(--border);
+  cursor:pointer;
+  background:none
+}
+
+/* ══════════════════════════════════════════════
+   ICÔNES SVG — Tailles et alignement
+   ══════════════════════════════════════════════ */
+
+/* Désactive les événements pointer sur les SVG inline (évite les conflits de clic) */
+svg { pointer-events: none; }
+
+/* Onglets de navigation */
+.nav-tab-icon svg {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Boutons thème et déconnexion */
+.btn-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.btn-theme svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Boutons de la toolbar Gantt et calendrier */
+.btn-ghost svg,
+.cal-save-btn svg,
+.cal-cancel-btn svg,
+.cal-reload-btn svg,
+.cal-ical-btn svg,
+.cal-sync-resync svg {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Bouton info (help-circle) */
+.cal-ical-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.cal-ical-info-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Icône d'avertissement sync */
+.cal-sync-icon svg {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+/* Boutons fermeture des panneaux */
+.edit-panel-close svg,
+.lissage-cfg-close svg,
+.cal-export-modal-close svg,
+.cal-split-close svg,
+.cal-ical-modal-close svg,
+.cb-close svg {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  stroke: #fff;
+  fill: none;
+}
+
+/* Boutons footer des panneaux (save / delete) */
+.ep-btn-save svg,
+.ep-btn-delete svg {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Boutons nav sidebar (user-plus / upload) */
+.nav-icon-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* Bouton de recherche dans la sidebar */
+.nav-search-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-search-icon-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Titre de la sidebar (dossier + texte) */
+.nav-header-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.nav-header-title svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* Bouton toggle de la sidebar (chevron rotatif) */
+.nav-toggle svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+/* Rotation 180° quand la sidebar est repliée */
+.nav-sidebar.collapsed .nav-toggle svg {
+  transform: rotate(180deg);
+}
+
+/* Titres des modals et panneaux avec icône */
+.cal-export-modal-title svg,
+.cal-ical-modal-title svg,
+.cal-split-title svg,
+.lissage-cfg-header svg,
+.edit-panel-title svg,
+.cb-title svg {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Titres inline flex */
+.cal-export-modal-title,
+.cal-ical-modal-title,
+.cal-split-title,
+.cb-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Boutons split et export modal */
+.cal-split-btn svg,
+.cal-export-toggle-all svg {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+}
+
+/* ── Planifié : ligne charge-ressource popup ── */
+tr.rcp-planned td { color:#22c55e; font-style:italic; }
+.rcp-planned-hint {
+  font-size:9px;
+  color:#22c55e;
+  padding:2px 8px 4px;
+  font-style:italic;
+}
+
+/* ── Badge planifié dans la nav ── */
+.nav-planned-badge {
+  display:inline-block;
+  margin-left:4px;
+  padding:0 4px;
+  font-size:8px;
+  font-weight:700;
+  border-radius:3px;
+  border:1px solid #86efac;
+  color:#22c55e;
+  background:rgba(34,197,94,.1);
+  vertical-align:middle;
+  line-height:14px;
+}
+.nav-planned-badge.active {
+  background:#22c55e;
+  color:#fff;
+  border-color:#22c55e;
+}
+.nav-action-btn.nav-planned-active {
+  color:#22c55e;
+  border-color:#86efac;
+  background:rgba(34,197,94,.12);
+}
+.nav-item.nav-item-planned .nav-item-name { color:#22c55e; }
+
+/* Navigation calendrier */
+.cal-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.cal-nav-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Lissage config header */
+.lissage-cfg-header {
+  display: flex;
+  align-items: center;
+}
+.lissage-cfg-header > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Boutons d'action sur événements calendrier (couper / supprimer) */
+.cal-event-action-btn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+

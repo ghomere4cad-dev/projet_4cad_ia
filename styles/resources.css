@@ -1,0 +1,651 @@
+/* ═══════════════════════════════════════════════════════════════
+   resources.css — Vue Ressources GHO-style
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Reset des styles globaux main.css qui saignent dans le tableau GHO ── */
+.gho-table { font-size: 11px; font-family: Arial, sans-serif; }
+.gho-table thead tr { background: var(--surface2); }
+.gho-table th {
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  text-transform: none;
+  letter-spacing: 0;
+  border-bottom: none;
+  font-weight: 600;
+}
+.gho-table td {
+  font-family: Arial, sans-serif;
+  border-bottom: none;
+}
+.gho-table tr:last-child td { border-bottom: none; }
+
+/* ── Wrapper global ── */
+.gho-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* PAS d'overflow:hidden ici : ça créerait un scroll container fantôme
+     qui empêcherait position:sticky de fonctionner sur les td */
+  background: var(--bg);
+}
+
+/* ── Toolbar ── */
+.gho-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.gho-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-right: auto;
+}
+
+.gho-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gho-btn-year {
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all .12s;
+}
+.gho-btn-year:hover { background: var(--surface2); color: var(--text); }
+
+.gho-year-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 36px;
+  text-align: center;
+}
+
+.gho-btn-unit {
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(180,130,255,.5);
+  background: rgba(180,130,255,.1);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .12s;
+}
+.gho-btn-unit:hover  { background: rgba(180,130,255,.25); }
+.gho-btn-unit.active { background: rgba(180,130,255,.3); border-color: rgba(180,130,255,.8); }
+
+.gho-btn-import-list {
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(114,182,236,.5);
+  background: rgba(114,182,236,.12);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .12s;
+}
+.gho-btn-import-list:hover { background: rgba(114,182,236,.28); }
+
+.gho-btn-import {
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(80,200,120,.5);
+  background: rgba(80,200,120,.15);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .12s;
+}
+.gho-btn-import:hover { background: rgba(80,200,120,.3); }
+
+
+/* ── Table wrapper ── */
+/* ── Single scroll wrapper (scrolls both X and Y) ── */
+.gho-scroll-wrap {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+  cursor: default;
+}
+.gho-scroll-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
+.gho-scroll-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── Single table ── */
+.gho-table {
+  border-collapse: collapse;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+  table-layout: fixed;
+  white-space: nowrap;
+}
+
+/* ── Sticky header: months row then days row ── */
+.gho-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 6; /* doit être > z-index des cellules sticky du corps (5) */
+  background: var(--surface2);
+}
+
+/* La hauteur de la ligne mois est déterminée par son contenu (search bar, etc.).
+   Le top de la ligne jours est calculé dynamiquement en JS (_attachResEvents)
+   pour s'aligner exactement sous la ligne mois réelle. */
+.gho-thead-months th { height: 26px; }
+.gho-thead-days th { top: 26px; } /* valeur de repli, écrasée en JS */
+
+/* Padding des cellules header */
+.gho-th-res  { padding: 4px 8px; }
+.gho-th-act  { padding: 4px 8px; }
+.gho-th-month {
+  padding: 0 4px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  border-right: 1px solid var(--border);
+  background-color: var(--surface2); /* explicite : évite tout fond transparent lors du compositing sticky */
+  overflow: hidden;
+}
+.gho-th-day {
+  padding: 2px 1px;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text);
+  border-right: 1px solid var(--border);
+  background-color: var(--surface2); /* explicite : évite tout fond transparent lors du compositing sticky */
+}
+
+/* ── Sticky left columns ── */
+.gho-sticky-res {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background-color: var(--bg);
+}
+.gho-sticky-act {
+  position: sticky;
+  left: 200px;
+  z-index: 5;
+  background-color: var(--bg);
+}
+.gho-sticky-task {
+  position: sticky;
+  left: var(--gho-task-left, 400px);
+  z-index: 5;
+  background-color: var(--bg);
+  border-right: 2px solid var(--border) !important;
+  box-shadow: 3px 0 6px rgba(0,0,0,.1);
+}
+
+/* ── Poignées de redimensionnement des colonnes ── */
+.gho-th-act,
+.gho-th-task {
+  position: relative;
+}
+.gho-col-resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  cursor: col-resize;
+  z-index: 10;
+  background: transparent;
+  transition: background .15s;
+}
+.gho-col-resize-handle:hover,
+.gho-col-resize-handle:active {
+  background: rgba(var(--accent-rgb, 236,114,6), .5);
+}
+/* Corner cells: sticky both top and left — highest z-index */
+.gho-table thead th.gho-sticky-res,
+.gho-table thead th.gho-sticky-act,
+.gho-table thead th.gho-sticky-task {
+  z-index: 9;
+  background-color: var(--surface2);
+}
+/* Chaque type de ligne force une couleur de fond solide sur ses sticky cells
+   pour masquer opaquement le contenu qui défile derrière */
+.gho-row-res .gho-sticky-res,
+.gho-row-res .gho-sticky-act,
+.gho-row-res .gho-sticky-task      { background-color: var(--surface) !important; }
+.gho-row-res:hover .gho-sticky-res,
+.gho-row-res:hover .gho-sticky-act,
+.gho-row-res:hover .gho-sticky-task { background-color: var(--surface2) !important; }
+.gho-row-act .gho-sticky-res,
+.gho-row-act .gho-sticky-act,
+.gho-row-act .gho-sticky-task       { background-color: var(--bg) !important; }
+.gho-row-proj .gho-sticky-res,
+.gho-row-proj .gho-sticky-act,
+.gho-row-proj .gho-sticky-task      { background-color: var(--bg) !important; }
+.gho-row-task .gho-sticky-res,
+.gho-row-task .gho-sticky-act,
+.gho-row-task .gho-sticky-task      { background-color: var(--bg) !important; }
+
+/* ── Column widths ── */
+.gho-th-res, .gho-td-res   { width: 200px; min-width: 200px; }
+.gho-th-act, .gho-td-act   { width: 200px; min-width: 200px; }
+.gho-th-task, .gho-td-task { width: 240px; min-width: 240px; }
+
+/* Rows aligned by single table — no JS sync needed */
+.gho-table tr { vertical-align: middle; }
+/* ── Resource rows ── */
+.gho-row-res {
+  cursor: pointer;
+  border-top: 3px solid var(--accent);
+  background: var(--surface);
+}
+
+.gho-td-res {
+  padding: 0;
+  border-right: 1px solid var(--border);
+  vertical-align: middle;
+  overflow: hidden;
+}
+/* Wrapper interne : flex sur un div, pas sur le td (préserve position:sticky) */
+.gho-td-res-inner {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  height: 100%;
+}
+
+.gho-toggle {
+  font-size: 10px;
+  color: var(--muted);
+  width: 10px;
+  flex-shrink: 0;
+}
+
+.gho-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.gho-res-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 11px;
+}
+
+/* Curseur pointer sur la cellule ressource (cliquable pour voir les infos) */
+.gho-td-res { cursor: pointer; }
+
+/* ── Activity summary cell ── */
+.gho-td-act {
+  padding: 0;
+  border-right: 2px solid var(--border);
+  font-size: 10px;
+  color: var(--muted);
+  vertical-align: middle;
+  overflow: hidden;
+}
+/* Wrapper interne flex — td reste display:table-cell pour que sticky marche */
+.gho-td-act-inner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  height: 100%;
+  cursor: pointer;
+}
+.gho-td-act-name {
+  cursor: default;
+  font-size: 10px;
+  color: var(--text);
+  padding: 4px 8px 4px 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gho-import-date {
+  font-size: 9px;
+  color: rgba(80,200,120,.8);
+  white-space: nowrap;
+}
+/* Nombre de projets : affiché à droite dans la colonne Activité/Projet */
+.gho-act-count {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.gho-no-data { color: var(--muted); opacity: .5; font-style: italic; }
+
+/* ── Activity detail rows (ancien format) ── */
+.gho-row-act {
+  border-top: 1px solid rgba(0,0,0,.06);
+  background: var(--bg);
+}
+.gho-row-res + .gho-row-act {
+  border-top: 2px solid var(--border);
+}
+.gho-row-act .gho-td-act {
+  padding-left: 12px;
+  font-size: 10px;
+  color: var(--text);
+}
+.gho-td-res-empty {
+  border-right: 1px solid var(--border);
+}
+
+/* ── Projet rows (nouveau format) ── */
+.gho-row-proj {
+  border-top: 2px solid var(--border);
+  background: var(--bg);
+}
+.gho-row-proj:hover .gho-sticky-res,
+.gho-row-proj:hover .gho-sticky-act { background: rgba(var(--accent-rgb, 236,114,6),.06); }
+.gho-td-proj-inner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px 4px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.gho-td-proj-inner:hover { background: rgba(var(--accent-rgb, 236,114,6),.08); }
+.gho-proj-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text);
+}
+.gho-task-count {
+  font-size: 9px;
+  color: var(--muted);
+  white-space: nowrap;
+  opacity: .8;
+}
+
+/* ── Task rows (nouveau format) ── */
+.gho-row-task {
+  border-top: 1px solid rgba(0,0,0,.04);
+  background: var(--bg);
+}
+/* Cellule vide (placeholder dans les colonnes non utilisées) */
+.gho-td-empty {
+  border-right: 1px solid var(--border);
+}
+.gho-td-task {
+  padding: 0;
+  vertical-align: middle;
+  overflow: hidden;
+}
+.gho-td-task-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 3px 8px;
+  overflow: hidden;
+}
+.gho-task-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  color: var(--text);
+  text-align: left;
+}
+.gho-task-id {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 9px;
+  font-family: 'Courier New', monospace;
+  color: var(--muted);
+  background: var(--surface2);
+  border-radius: 3px;
+  padding: 1px 4px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .15s;
+  pointer-events: none;
+}
+.gho-row-task:hover .gho-task-id { opacity: 1; }
+
+/* ── Popup ressources manquantes ── */
+.gho-dialog-wide { min-width: 380px; max-width: 520px; }
+.gho-missing-ok   { font-size: 11px; color: #2e7d32; margin: 0 0 6px; }
+.gho-missing-warn { font-size: 11px; color: var(--text); margin: 0 0 6px; }
+.gho-missing-hint { font-size: 10px; color: var(--muted); margin: 8px 0 0; }
+.gho-missing-list {
+  list-style: none;
+  padding: 6px 10px;
+  margin: 0;
+  background: var(--surface2);
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+}
+.gho-missing-item {
+  font-size: 11px;
+  color: var(--text);
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.gho-missing-item:last-child { border-bottom: none; }
+
+/* ── Day cells ── */
+.gho-td-day {
+  text-align: center;
+  padding: 3px 1px;
+  border-right: 1px solid var(--border);
+  vertical-align: middle;
+  min-width: var(--col-w, 34px);
+  width: var(--col-w, 34px);
+  font-size: 9px;
+}
+.gho-td-day.we,
+.gho-td-day.weekend { background: rgba(0,0,0,.04); }
+.gho-td-day.today   { background: rgba(236,114,6,.10); }
+/* Backgrounds opaques pour les th de jours : overlay semi-transparent
+   peint par-dessus la couleur de fond solide, pour masquer le contenu
+   qui défile derrière l'en-tête sticky. */
+.gho-th-day.weekend,
+.gho-th-day.we      { background: linear-gradient(rgba(0,0,0,.05), rgba(0,0,0,.05)) var(--surface2); color: var(--muted); }
+.gho-th-day.today   { background: linear-gradient(rgba(236,114,6,.18), rgba(236,114,6,.18)) var(--surface2); color: var(--accent); font-weight: 700; }
+
+/* ── Charge cell content ── */
+.gho-cell {
+  display: inline-block;
+  padding: 1px 2px;
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 700;
+  min-width: 18px;
+  text-align: center;
+}
+.gho-cell.c-ok   { background: #fff;                color: #555;    }
+/* Fond bleu : cellule éditée manuellement depuis le Gantt */
+.gho-td-day.gho-td-edited { background: rgba(59,130,246,.14) !important; }
+
+.gho-cell.c-low  { background: rgba(76,175,80,.2);  color: #2e7d32; }
+.gho-cell.c-high { background: rgba(255,152,0,.25); color: #e65100; }
+.gho-cell.c-over { background: rgba(244,67,54,.25); color: #b71c1c; }
+
+/* ── Empty state ── */
+.gho-empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ── Dialog ressource ── */
+.gho-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gho-dialog {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.3);
+}
+.gho-dialog-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+.gho-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.gho-dlg-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: -4px;
+}
+.gho-dlg-input {
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12px;
+}
+.gho-dlg-input:focus { outline: none; border-color: var(--accent); }
+.gho-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.gho-dlg-cancel {
+  padding: 5px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+.gho-dlg-save {
+  padding: 5px 12px;
+  border-radius: 4px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.gho-dlg-save:hover { opacity: .9; }
+
+/* ── ID externe (lecture seule) dans le dialog ── */
+.gho-dlg-input-id {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--surface2);
+  cursor: default;
+  opacity: .85;
+}
+
+/* ── Search bar + type filter dans le header Ressource ── */
+.gho-search-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+.gho-search {
+  display: block;
+  width: 100%;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+.gho-search:focus { outline: none; border-color: var(--accent); }
+.gho-type-filter {
+  width: 100%;
+  padding: 2px 4px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.gho-type-filter:focus { outline: none; border-color: var(--accent); }
+
+/* ── Last import date in toolbar ── */
+.gho-last-import {
+  font-size: 10px;
+  color: rgba(80,200,120,.9);
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(80,200,120,.1);
+}
+
+
+/* ── Jour férié ── */
+.gho-th-day.ferie  { background: linear-gradient(rgba(156,39,176,.12), rgba(156,39,176,.12)) var(--surface2); color: #7b1fa2; }
+.gho-td-day.ferie  { background: rgba(156,39,176,.06); }
+
+/* ── Drag cursor on calendar day cells ── */
+.gho-td-day { cursor: grab; }
+.gho-td-day:active { cursor: grabbing; }
+
