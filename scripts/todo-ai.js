@@ -29,7 +29,11 @@ async function _aiFetchModels() {
     .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
     .map(m => ({ id: m.name.replace('models/', ''), label: m.displayName || m.name.replace('models/', '') }))
     .sort((a, b) => {
-      const score = id => id.includes('flash') ? 0 : id.includes('pro') ? 1 : 2;
+      const score = id =>
+        id === 'gemini-flash-lite-latest' ? 0 :
+        id.includes('flash-lite')         ? 1 :
+        id.includes('flash')              ? 2 :
+        id.includes('pro')                ? 3 : 4;
       return score(a.id) - score(b.id);
     });
 }
@@ -115,11 +119,12 @@ async function _aiLoadModelSelector() {
       _aiSetStatus('Vérifiez votre clé API', true);
       return;
     }
-    const saved = _aiModel();
+    const saved  = localStorage.getItem(_AI_MODEL_LS) || '';
+    const chosen = models.some(m => m.id === saved) ? saved : models[0].id;
     select.innerHTML = models.map(m =>
-      `<option value="${m.id}" ${(saved || models[0].id) === m.id ? 'selected' : ''}>${m.label}</option>`
+      `<option value="${m.id}" ${chosen === m.id ? 'selected' : ''}>${m.label}</option>`
     ).join('');
-    if (!saved) localStorage.setItem(_AI_MODEL_LS, models[0].id);
+    if (chosen !== saved) localStorage.setItem(_AI_MODEL_LS, chosen);
   } catch {
     select.innerHTML = '<option value="">Erreur de chargement</option>';
   }
