@@ -30,9 +30,17 @@ const _ferieCache = {}; // year → Set<timestamp>
 /* ══════════════════════════════════
    CRUD ressources (inchangé)
    ══════════════════════════════════ */
+/* ghoData est exclu de la sérialisation : c'est la copie la plus volumineuse
+   (charges journalières par ressource/tâche) et elle est déjà persistée à
+   l'identique sous GHO_KEY par saveGhoData(), rechargée via _mergeGhoData()
+   au démarrage. La dupliquer ici doublait inutilement l'usage du quota
+   localStorage et faisait souvent échouer les sauvegardes suivantes
+   (portfolio, base ferme) une fois le quota atteint. */
 function saveResources() {
-  try { localStorage.setItem(RESOURCES_KEY, JSON.stringify(resources)); }
-  catch(e) { _warnStorageFailure('ressources', e); }
+  try {
+    const serialized = resources.map(({ ghoData, ...r }) => r);
+    localStorage.setItem(RESOURCES_KEY, JSON.stringify(serialized));
+  } catch(e) { _warnStorageFailure('ressources', e); }
 }
 
 /* Construit la payload GHO : { [resourceId]: ghoData } */

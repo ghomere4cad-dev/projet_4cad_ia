@@ -243,7 +243,7 @@ function _showMissingResPopup(missingNames, updatedCount) {
    le portfolio de travail via mergeFirmIntoWorking().
    Retourne { projectsCreated, tasksImported }
    ─────────────────────────────────────────────────────────────────────────────── */
-function _upsertPortfolioFromGHO(taskData, taskAssignmentMap = {}, resetPlanned = false) {
+function _upsertPortfolioFromGHO(taskData, taskAssignmentMap = {}, resetPlanned = false, afterSave = null) {
   if (typeof _saveBackToPortfolio === 'function') _saveBackToPortfolio();
 
   let projectsCreated = 0;
@@ -305,6 +305,11 @@ function _upsertPortfolioFromGHO(taskData, taskAssignmentMap = {}, resetPlanned 
     savePortfolio();
     /* Le portfolio a changé → rafraîchir les listes clients dépendantes (Todo/Suivi) */
     if (typeof _suiviRenderSidebar === 'function') _suiviRenderSidebar();
+    /* Sauvegarder ressources/GHO (volumineux) après le portfolio (petit mais
+       critique pour la synchro Todo/Suivi) : en cas de quota localStorage
+       serré, mieux vaut perdre les données ressources (ré-importables) que
+       le portfolio. */
+    if (typeof afterSave === 'function') afterSave();
   }
 
   if (typeof saveFirmPortfolio === 'function') saveFirmPortfolio(newFirmData);
@@ -551,9 +556,12 @@ function parseGHOExcel(buffer) {
       }
     });
 
-    saveResources(); // métadonnées → gantt_resources
-    saveGhoData();   // charges/projets/tâches → gantt_gho
+    /* Rafraîchissement visuel immédiat (les mutations resources[].ghoData
+       sont déjà en mémoire) ; la persistance localStorage de resources/GHO
+       (le plus volumineux) est différée après celle du portfolio ci-dessous
+       — voir _saveResAndGho. */
     _refreshResView();
+    const _saveResAndGho = () => { saveResources(); saveGhoData(); };
 
     /* ── Mise à jour du portfolio : modal d'options si données disponibles ── */
     if (doPortfolioImport && Object.keys(taskData).length > 0 && typeof showImportModal === 'function') {
@@ -565,7 +573,7 @@ function parseGHOExcel(buffer) {
       showImportModal(
         `${resMsg}\n${projCount} projet(s), ${taskCount} tâche(s) à importer dans le portfolio.`,
         (resetPlanned) => {
-          const portfolioStats = _upsertPortfolioFromGHO(taskData, taskAssignmentMap, resetPlanned);
+          const portfolioStats = _upsertPortfolioFromGHO(taskData, taskAssignmentMap, resetPlanned, _saveResAndGho);
           if (missing.length > 0) {
             _showMissingResPopup(missing, updated);
           } else {
@@ -578,7 +586,9 @@ function parseGHOExcel(buffer) {
       /* Pas de données portfolio (ou modal indisponible) → comportement direct */
       let portfolioStats = null;
       if (doPortfolioImport && Object.keys(taskData).length > 0) {
-        portfolioStats = _upsertPortfolioFromGHO(taskData, taskAssignmentMap, false);
+        portfolioStats = _upsertPortfolioFromGHO(taskData, taskAssignmentMap, false, _saveResAndGho);
+      } else {
+        _saveResAndGho();
       }
       if (missing.length > 0) {
         _showMissingResPopup(missing, updated);
