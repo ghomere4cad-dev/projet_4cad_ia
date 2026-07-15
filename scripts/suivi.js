@@ -2489,11 +2489,11 @@ function _suiviAiConfirmReview() {
 }
 
 function _suiviAiEditKey() {
-  const key = prompt('Entrez votre clé API Gemini :', typeof _aiKey !== 'undefined' ? _aiKey() : '');
-  if (key === null) return;
-  const LS = typeof _AI_KEY_LS !== 'undefined' ? _AI_KEY_LS : 'todoGeminiKey';
-  localStorage.setItem(LS, key.trim());
-  _suiviAiSetStatus('Clé enregistrée.');
+  if (typeof _aiOpenKeyModal !== 'function') return;
+  _aiOpenKeyModal(() => {
+    _suiviAiSetStatus('Clé enregistrée.');
+    _suiviAiLoadModels();
+  });
 }
 
 /* ═══════════════════════════════════════════
