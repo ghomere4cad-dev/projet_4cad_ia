@@ -36,51 +36,13 @@
   <div class="toolbar">
     <input type="file" id="dataImportInput" accept=".json" style="display:none">
     <button class="btn-theme" onclick="triggerListImport()" title="Importer la liste des ressources (Excel)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 1-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Ressource</button>
-    <button class="btn-theme" onclick="triggerGHOImport()" title="Importer les charges clients (GHO Excel)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Client</button>
+    <button class="btn-theme" onclick="triggerGHOImport()" title="Importer la liste des clients (Excel, colonne Société)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Client</button>
     <button class="btn-theme" id="btnAiKey" onclick="_aiOpenKeyModal()" title="Configurer votre clé API Gemini pour les fonctions IA"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Clé API IA</button>
     <button class="btn-theme" id="btnTheme" onclick="toggleTheme()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> <span class="btn-theme-lbl">Sombre</span></button>
     <button class="btn-theme" onclick="importAppData()" title="Importer les données (JSON)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Importer</button>
     <button class="btn-theme" onclick="exportAppData()" title="Sauvegarder les données (JSON)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></button>
   </div>
 </header>
-
-<!-- ══════════════════════════════════
-     MODAL OPTIONS IMPORT
-     ══════════════════════════════════════════════ -->
-<div id="importOptionsModal" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.55);align-items:center;justify-content:center;">
-  <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:8px;padding:24px 28px;width:420px;max-width:95vw;box-shadow:0 12px 40px rgba(0,0,0,.25);font-family:Arial,sans-serif;">
-    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Options d'import
-    </div>
-    <div id="importSummaryText" style="font-size:12px;color:var(--muted);margin-bottom:18px;white-space:pre-line;line-height:1.6;background:var(--surface2);padding:10px 12px;border-radius:5px;border:1px solid var(--border);"></div>
-    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);margin-bottom:20px;">
-      <input type="checkbox" id="importResetPlanned" style="width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
-      <span style="font-size:12px;color:var(--text);">Réinitialiser aussi la base planifiée <span style="color:var(--muted);font-size:11px;">(supprime les modifications utilisateurs)</span></span>
-    </label>
-    <div style="display:flex;gap:10px;justify-content:flex-end;">
-      <button onclick="cancelImport()" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;">Annuler</button>
-      <button onclick="confirmImport()" style="background:var(--accent);color:#fff;border:none;border-radius:5px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;">Confirmer l'import</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     MODAL CONFIRMATION CONFLITS PLANIFIÉS
-     ══════════════════════════════════════════════ -->
-<div id="firmConflictModal" style="display:none;position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,.55);align-items:center;justify-content:center;">
-  <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #f59e0b;border-radius:8px;padding:24px 28px;width:460px;max-width:95vw;box-shadow:0 12px 40px rgba(0,0,0,.25);font-family:Arial,sans-serif;">
-    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      Conflits détectés
-    </div>
-    <div id="firmConflictText" style="font-size:12px;color:var(--text);margin-bottom:20px;white-space:pre-line;line-height:1.6;background:var(--surface2);padding:10px 12px;border-radius:5px;border:1px solid var(--border);"></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;">
-      <button onclick="cancelFirmConflict()" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;">Non</button>
-      <button onclick="confirmFirmConflict()" style="background:#f59e0b;color:#fff;border:none;border-radius:5px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;">Oui</button>
-    </div>
-  </div>
-</div>
 
 <!-- ══════════════════════════════════════════════
      VUE TO DO

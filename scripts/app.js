@@ -29,12 +29,9 @@ function toggleTheme() {
 })();
 
 /* ── Chargement des données locales ──────────────────────────────────────────
-   Tout est stocké en localStorage : portfolio (alimenté par l'import GHO dans
-   Ressources), ressources, Todo, Suivi. Chargement synchrone, pas d'auth. ── */
-loadPortfolio();
-loadFirmPortfolio();
-
-try { usePlanned = localStorage.getItem('4cap_useplanned') === '1'; } catch(_) {}
+   Tout est stocké en localStorage : clients (alimentés par l'import Excel du
+   header), ressources, Todo, Suivi. Chargement synchrone, pas d'auth. ── */
+loadClients();
 
 if (typeof initResources === 'function') initResources();
 if (typeof _startTodoLoad === 'function') _startTodoLoad();

@@ -1152,9 +1152,9 @@ function _todoOpenFolderDialog(folderId) {
   overlay.className = 'todo-dialog-overlay';
   overlay.id = 'todoDialogOverlay';
 
-  /* Liste de clients GHO pour l'autocomplétion */
+  /* Liste de clients connus pour l'autocomplétion */
   const _ghoClients = [...new Set(
-    (typeof portfolio !== 'undefined' ? portfolio.map(p => p.client || '').filter(Boolean) : [])
+    (typeof clients !== 'undefined' ? clients.filter(Boolean) : [])
   )].sort();
 
   overlay.innerHTML = `

@@ -465,20 +465,11 @@ function _todoUpdateStatus(oldName, newName, color) {
   _todoSave();
 }
 
-/* ── Ressources disponibles (depuis le portfolio) ─────────────────────────── */
+/* ── Ressources disponibles (base ressources importée) ────────────────────── */
 function _todoGetResources() {
   const names = new Set();
-  if (typeof portfolio !== 'undefined') {
-    portfolio.forEach(proj => {
-      (proj.rows || []).forEach(row => {
-        (row.assignments || []).forEach(a => {
-          if (a.resourceNom) names.add(a.resourceNom);
-        });
-      });
-    });
-  }
   if (typeof resources !== 'undefined') {
-    resources.forEach(r => { if (r.nom) names.add(r.nom); });
+    resources.forEach(r => { const n = r.nom || r.fullName; if (n) names.add(n); });
   }
   return [...names].sort();
 }

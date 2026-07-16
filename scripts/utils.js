@@ -2,11 +2,8 @@
    utils.js — Constantes, état global, utilitaires
    ═══════════════════════════════════════════ */
 
-const STORAGE_KEY      = 'gantt4cad_portfolio';
-const FIRM_STORAGE_KEY = 'gantt4cad_portfolio_firm';
-let portfolio     = [];
-let portfolioFirm = [];   // base ferme (import-only)
-let activeProjectId = null;
+const CLIENTS_KEY = 'gantt4cad_clients';
+let clients = [];   // liste simple de noms de sociétés (import Excel une colonne)
 let rows=[];
 let view='semaine';
 let dayWidth=6;
@@ -185,8 +182,6 @@ function isVisible(r){
   return true;
 }
 let _pptxExportReady = false;
-let usePlanned = false;              // mode d'affichage global planifié (delta charge Ressources)
-let selectedProjectIds = new Set();  // IDs de projets (bookkeeping portfolio, sans UI dédiée)
 let multiViewMode = false;
 
 /* ── Identité locale unique — application mono-utilisateur, sans authentification ── */
