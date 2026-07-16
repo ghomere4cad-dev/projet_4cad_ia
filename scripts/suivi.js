@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════
    suivi.js — Suivi COPROJ : état, persistance locale, CRUD
-   La liste des clients est pilotée par les dossiers Todo liés aux clients du portfolio.
+   La liste des clients est pilotée par les dossiers Todo liés à un client connu.
    ═══════════════════════════════════════════ */
 
 /* ── État global ── */
@@ -51,13 +51,13 @@ function _suiviGetActive() {
   return p;
 }
 
-/* Retourne les dossiers Todo dont le nom correspond à un client du portfolio */
+/* Retourne les dossiers Todo dont le nom correspond à un client connu */
 function _suiviGetLinkedClients() {
-  const portfolioClients = new Set(
-    (typeof portfolio !== 'undefined' ? portfolio : []).map(p => p.client || '').filter(Boolean)
+  const clientSet = new Set(
+    (typeof clients !== 'undefined' ? clients : []).filter(Boolean)
   );
   const folders = (typeof _todoData !== 'undefined' ? _todoData.folders || [] : []);
-  return folders.filter(f => portfolioClients.has(f.name));
+  return folders.filter(f => clientSet.has(f.name));
 }
 
 function _suiviFmtDate(iso) {
@@ -252,7 +252,7 @@ function _startSuiviLoad() {
   _suiviLoaded = true;
 }
 
-/* ── Nouveau client : dropdown depuis les clients du portfolio ── */
+/* ── Nouveau client : dropdown depuis la base clients ── */
 function _suiviNewProject() {
   const panel = document.getElementById('suiviNewClientPanel');
   if (!panel) return;
@@ -268,15 +268,15 @@ function _suiviNewProject() {
 function _suiviFilterNewClientList(q) {
   const list = document.getElementById('suiviNewClientList');
   if (!list) return;
-  const portfolioClients = [...new Set(
-    (typeof portfolio !== 'undefined' ? portfolio : []).map(p => p.client || '').filter(Boolean)
+  const knownClients = [...new Set(
+    (typeof clients !== 'undefined' ? clients : []).filter(Boolean)
   )].sort();
   const existingFolderNames = new Set(
     (typeof _todoData !== 'undefined' ? _todoData.folders || [] : []).map(f => f.name)
   );
   const filtered = q
-    ? portfolioClients.filter(c => c.toLowerCase().includes(q.toLowerCase()))
-    : portfolioClients;
+    ? knownClients.filter(c => c.toLowerCase().includes(q.toLowerCase()))
+    : knownClients;
 
   if (!filtered.length) {
     list.innerHTML = '<div class="suivi-new-client-empty">Aucun client trouvé</div>';

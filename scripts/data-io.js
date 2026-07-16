@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
    data-io.js — Export / Import de toutes les données locales en JSON
-   (Todo, Suivi, Ressources, Portfolio)
+   (Todo, Suivi, Ressources, Clients)
    ═══════════════════════════════════════════════════════════════ */
 
-const _DATA_IO_VERSION = 1;
+const _DATA_IO_VERSION = 2;
 
 function _collectAppData() {
   return {
@@ -12,9 +12,7 @@ function _collectAppData() {
     todo: _todoData,
     suivi: _suiviState,
     resources: resources,
-    gho: (typeof _buildGhoPayload === 'function') ? _buildGhoPayload() : null,
-    portfolio: _serializePortfolio(portfolio),
-    portfolioFirm: _serializePortfolio(portfolioFirm)
+    clients: clients
   };
 }
 
@@ -58,7 +56,7 @@ function _applyImportedAppData(data) {
     alert('Fichier invalide.');
     return;
   }
-  if (!confirm('Importer ce fichier remplacera toutes les données locales (Todo, Suivi, Ressources, Portefeuille).\n\nContinuer ?')) return;
+  if (!confirm('Importer ce fichier remplacera toutes les données locales (Todo, Suivi, Ressources, Clients).\n\nContinuer ?')) return;
 
   const _warnCountBefore = _storageWarned.size;
 
@@ -74,15 +72,9 @@ function _applyImportedAppData(data) {
     resources = data.resources;
     saveResources();
   }
-  if (data.gho) {
-    try { localStorage.setItem(GHO_KEY, JSON.stringify(data.gho)); }
-    catch(e) { _warnStorageFailure('données GHO (charges par ressource)', e); }
-    if (typeof _mergeGhoData === 'function') _mergeGhoData(data.gho);
-  }
-  if (Array.isArray(data.portfolio)) {
-    saveFirmPortfolio(Array.isArray(data.portfolioFirm) ? data.portfolioFirm : []);
-    portfolio = _deserializePortfolio(data.portfolio);
-    savePortfolio();
+  if (Array.isArray(data.clients)) {
+    clients = data.clients;
+    saveClients();
   }
 
   if (_storageWarned.size === _warnCountBefore) alert('Import terminé.');
