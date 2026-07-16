@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════════
    router.js — Navigation entre les vues de l'application
-   Vues : 'ressources' | 'todo' | 'suivi'
+   Vues : 'todo' | 'suivi'
    Hash routing : location.hash = '#<vue>'
    ═══════════════════════════════════════════ */
 
-const _VALID_VIEWS = ['ressources', 'todo', 'suivi'];
+const _VALID_VIEWS = ['todo', 'suivi'];
 
 function _hashView() {
   const h = location.hash.replace(/^#/, '');
@@ -21,19 +21,13 @@ function _applyView(view) {
     tab.classList.toggle('active', tab.dataset.view === view);
   });
 
-  const viewRessources = document.getElementById('viewRessources');
-  const viewTodo       = document.getElementById('viewTodo');
-  const viewSuivi       = document.getElementById('viewSuivi');
+  const viewTodo  = document.getElementById('viewTodo');
+  const viewSuivi = document.getElementById('viewSuivi');
 
-  viewRessources.style.display = 'none';
   if (viewTodo)  viewTodo.style.display  = 'none';
   if (viewSuivi) viewSuivi.style.display = 'none';
 
-  if (view === 'ressources') {
-    viewRessources.style.display = '';
-    if (typeof renderResourcesView === 'function') renderResourcesView();
-
-  } else if (view === 'todo') {
+  if (view === 'todo') {
     if (viewTodo) viewTodo.style.display = 'flex';
     if (typeof renderTodoView === 'function') renderTodoView();
 
